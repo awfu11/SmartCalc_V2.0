@@ -1,9 +1,12 @@
-CC = gcc
-CFLAGS = -Wall -Werror -Wextra -std=c11
+CC=gcc
+CFLAGS=-Wall -Werror -Wextra -std=c11
 
-MODEL_FILES = 3d_viewer/3d_viewer.c
-VIEWER_FILES = 3d_viewer/*.cpp 3d_viewer/*.h
-TEST_FILES = unit_tests/*.c
+SRC_FILES=smart_calc_v1/stack.c smart_calc_v1/smart_calc_v1.c
+HEADER_FILES=smart_calc_v1/smart_calc_v1.h
+
+CPP_FILES=$(wildcard smart_calc_v1/*.cpp)
+
+TEST_SRC=tests/tests.c
 
 ifeq ($(shell uname), Linux)
 	LIB_CHECK=-lcheck -lm -lpthread -lrt -lsubunit
@@ -12,43 +15,46 @@ else
 	LIB_CHECK=-lm $(shell pkg-config --cflags --libs check)
 endif
 
-all: install
+all: test
 
 install:
-	@mkdir build/
-	@cd build/ && qmake ../3d_viewer/3d_viewer_v1.pro && make
-	@open build/3d_viewer_v1.app
-# @./build/3d_viewer_v1.app/Contents/MacOS/3d_viewer_v1
+	cd smart_calc_v1/ && mkdir build/
+	cd smart_calc_v1/build/ && qmake ../smart_calc.pro && make
+	open smart_calc_v1/build/smart_calc.app
 
 uninstall:
-	rm -rf build/
-	rm -rf settings.ini
+	rm -rf smart_calc_v1/build
 
 clean:
-	rm -rf build/
-	rm -rf test *.gcda *.gcno
-	rm -rf report/
-	rm -rf *.gcno *.gcda *.info gcov_report
+	rm -rf smart_calc_v1/*.o
+	rm -rf smart_calc_v1/*.a
+	rm -rf smart_calc_v1/test
+	rm -rf *.gcno *.gcda
+	rm -rf gcov_report
+	rm -rf smart_calc_v1/*.info
+	rm -rf report
+	rm -rf smart_calc_v1/build
 	rm -rf ../*.tar
-	rm -rf settings.ini
-	rm -rf ../3D_Viewer_V1.tar
+	rm -rf smart_calc_v1/.clang-format
 
-dist:
-	tar -cf ../3D_Viewer_V1.tar 3d_viewer models Makefile doc.md
+dist: clean
+	cd ..
+	tar -cf ../smart_calc_v1.tar smart_calc_v1 Makefile documentation.html
 
-tests:
-	@$(CC) $(CFLAGS) --coverage $(MODEL_FILES) $(TEST_FILES) -o test $(LIB_CHECK)
-	@./test
-	@rm -rf *.gcda *.gcno
+test:
+	$(CC) --coverage smart_calc_v1/*.c $(TEST_SRC) -o test $(LIB_CHECK)
+	./test
+# leaks -atExit -- ./test
+	rm -rf test *.gcda *.gcno
 
 gcov_report:
-	@$(CC) $(CFLAGS) --coverage $(MODEL_FILES) $(TEST_FILES) -o gcov_report $(LIB_CHECK)
-	@./gcov_report
-	@lcov -o gcov_report.info -c -d .
-	@genhtml -o report gcov_report.info
-	@open ./report/index.html
-	@rm -rf *.gcno *.gcda *.info gcov_report
+	$(CC) $(CFLAGS) --coverage $(SRC_FILES) $(TEST_SRC) $(LIB_CHECK) -o gcov_report
+	./gcov_report
+	lcov -o gcov_report.info -c -d .
+	genhtml -o report gcov_report.info
+	open ./report/index.html
+	rm -rf *.gcno *.gcda *.info gcov_report
 
-clang:
-	clang-format -n -style=google $(VIEWER_FILES) $(MODEL_FILES) $(TEST_FILES)
-	clang-format -i -style=google $(VIEWER_FILES) $(MODEL_FILES) $(TEST_FILES)
+style_test:
+	clang-format -n -style=google $(SRC_FILES) $(HEADER_FILES) $(CPP_FILES) smart_calc_v1/*.h
+	clang-format -i -style=google $(SRC_FILES) $(HEADER_FILES) $(CPP_FILES) smart_calc_v1/*.h
