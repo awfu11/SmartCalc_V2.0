@@ -64,3 +64,5 @@ The SmartCalc v1.0 program must be implemented:
 Provide a special mode "credit calculator":
 - Input: total credit amount, term, interest rate, type (annuity, differentiated)
 - Output: monthly payment, overpayment on credit, total payment
+
+![alt text](https://github.com/awfu11/s21_smartcalc/bolb/main/SmartCalc%20v1.png)
