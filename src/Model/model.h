@@ -49,7 +49,7 @@ class Model {
  public:
   Model() = default;
 
-  Model(double var, std::string eq) noexcept {
+  Model(const double& var, const std::string& eq) noexcept {
     this->var = var;
     this->eq = eq;
     iter = (this->eq).begin();
@@ -57,7 +57,7 @@ class Model {
 
   ~Model() = default;
 
-  void set(std::string eq, double var = 0.0) noexcept {
+  void set(const std::string& eq, const double& var = 0.0) noexcept {
     this->var = var;
     this->eq = eq;
     iter = (this->eq).begin();
