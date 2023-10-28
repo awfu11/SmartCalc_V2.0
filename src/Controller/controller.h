@@ -10,7 +10,7 @@ class Controller {
   Controller(Model* m) : model(m) {}
   ~Controller() = default;
 
-  std::pair<int, double> calculate(std::string eq, double var) {
+  std::pair<int, double> calculate(const std::string& eq, const double& var = 0.0) {
     model->set(eq, var);
     return model->calculateReversePN();
   }
