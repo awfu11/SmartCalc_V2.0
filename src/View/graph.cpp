@@ -19,9 +19,9 @@ Graph::~Graph() { delete ui; }
 
 void Graph::fill(QVector<double>& x, QVector<double>& y, double& rangeMin,
                  double& rangeMax) {
-  double step = std::abs(rangeMax - rangeMin) / 1e5;
-  x.reserve(1e5 + 1);
-  y.reserve(1e5 + 1);
+  double step = std::abs(rangeMax - rangeMin) / 1e6;
+  x.reserve(1e6 + 1);
+  y.reserve(1e6 + 1);
   for (double value = rangeMin; value <= rangeMax; value += step) {
     auto calc = controller->calculate(lexem.toStdString(), value);
     if (calc.first == OK) {
