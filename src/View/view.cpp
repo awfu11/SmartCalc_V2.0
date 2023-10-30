@@ -298,10 +298,12 @@ void View::plotFunction() {
   if (!lexem.isEmpty()) {
     lexem.resize(lexem.length() - 1);
   }
-  wind = new Graph(controller, lexem);
-  wind->setWindowTitle("Graph");
-  wind->setAttribute(Qt::WA_DeleteOnClose);
-  wind->show();
+  if (wind == nullptr) {
+    wind = new Graph(controller, lexem);
+    wind->setWindowTitle("Graph");
+    wind->setAttribute(Qt::WA_DeleteOnClose);
+    wind->show();
+  }
 }
 
 void View::keyPressEvent(QKeyEvent *event) {
